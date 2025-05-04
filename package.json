@@ -1,0 +1,22 @@
+{
+  "name": "telegram-file-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for handling photos and audio files",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --loader ts-node/esm index.ts",
+    "build": "tsc",
+    "dev": "node --loader ts-node/esm index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.61.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/node-telegram-bot-api": "^0.64.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
