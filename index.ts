@@ -30,7 +30,24 @@ if (!fs.existsSync(pagesDir)) {
 // Handle incoming messages
 bot.on('message', async (msg: any) => {
     const chatId = msg.chat.id;
-    const username = msg.from?.username || 'unknown_user';
+    const username = msg.from?.username;
+
+    // Check if user has a username
+    if (!username) {
+        await bot.sendMessage(
+            chatId,
+            'Для использования бота необходимо установить username в настройках Telegram.\n\n' +
+            'Как установить username:\n' +
+            '1. Откройте настройки Telegram\n' +
+            '2. Перейдите в раздел "Изменить профиль"\n' +
+            '3. Нажмите на поле "Имя пользователя"\n' +
+            '4. Введите желаемый username\n' +
+            '5. Нажмите "Сохранить"\n\n' +
+            'После установки username, вы сможете отправлять фото и аудио сообщения.'
+        );
+        return;
+    }
+
     const userDir = path.join(pagesDir, username);
 
     // Create user directory if it doesn't exist
@@ -58,10 +75,10 @@ bot.on('message', async (msg: any) => {
             const photoPath = path.join(userDir, 'photo.jpg');
             fs.writeFileSync(photoPath, Buffer.from(buffer));
 
-            await bot.sendMessage(chatId, 'Photo saved successfully!');
+            await bot.sendMessage(chatId, 'Фото успешно сохранено!');
         } catch (error) {
             console.error('Error saving photo:', error);
-            await bot.sendMessage(chatId, 'Error saving photo. Please try again.');
+            await bot.sendMessage(chatId, 'Ошибка при сохранении фото. Пожалуйста, попробуйте еще раз.');
         }
     }
 
@@ -83,10 +100,10 @@ bot.on('message', async (msg: any) => {
             const audioPath = path.join(userDir, 'audio.mp3');
             fs.writeFileSync(audioPath, Buffer.from(buffer));
 
-            await bot.sendMessage(chatId, 'Audio saved successfully!');
+            await bot.sendMessage(chatId, 'Аудио успешно сохранено!');
         } catch (error) {
             console.error('Error saving audio:', error);
-            await bot.sendMessage(chatId, 'Error saving audio. Please try again.');
+            await bot.sendMessage(chatId, 'Ошибка при сохранении аудио. Пожалуйста, попробуйте еще раз.');
         }
     }
 });
