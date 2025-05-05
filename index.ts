@@ -27,6 +27,64 @@ if (!fs.existsSync(pagesDir)) {
     fs.mkdirSync(pagesDir);
 }
 
+// Function to check if user has both photo and audio
+const checkUserFiles = (userDir: string): boolean => {
+    const photoPath = path.join(userDir, 'photo.jpg');
+    const audioPath = path.join(userDir, 'audio.mp3');
+    return fs.existsSync(photoPath) && fs.existsSync(audioPath);
+};
+
+// Function to send user's page link
+const sendUserPageLink = async (chatId: number, username: string) => {
+    const userPageUrl = `https://chalysh.tech/birthday/pages/${username}`;
+    await bot.sendMessage(
+        chatId,
+        `Ваша страница с поздравлением готова!\n\n` +
+        `Вы можете посмотреть её по ссылке:\n${userPageUrl}\n\n` +
+        `Вы можете обновить своё поздравление, отправив новое фото или аудио.`
+    );
+};
+
+// Handle /start command
+bot.onText(/\/start/, async (msg) => {
+    const chatId = msg.chat.id;
+    const username = msg.from?.username;
+
+    if (!username) {
+        await bot.sendMessage(
+            chatId,
+            'Добро пожаловать! 👋\n\n' +
+            'Для использования бота необходимо установить username в настройках Telegram.\n\n' +
+            'Как установить username:\n' +
+            '1. Откройте настройки Telegram\n' +
+            '2. Перейдите в раздел "Изменить профиль"\n' +
+            '3. Нажмите на поле "Имя пользователя"\n' +
+            '4. Введите желаемый username\n' +
+            '5. Нажмите "Сохранить"\n\n' +
+            'После установки username, напишите /start снова.'
+        );
+        return;
+    }
+
+    const userDir = path.join(pagesDir, username);
+    const hasFiles = fs.existsSync(userDir) && checkUserFiles(userDir);
+
+    await bot.sendMessage(
+        chatId,
+        'Добро пожаловать! 👋\n\n' +
+        'Этот бот поможет вам создать персональное поздравление с днем рождения!\n\n' +
+        'Как это работает:\n' +
+        '1. Отправьте фото для вашего поздравления\n' +
+        '2. Отправьте аудио сообщение с вашими пожеланиями\n' +
+        '3. Получите ссылку на вашу персональную страницу с поздравлением\n\n' +
+        (hasFiles 
+            ? 'У вас уже есть готовое поздравление! Вы можете:\n' +
+              '• Посмотреть его по ссылке: https://chalysh.tech/birthday/pages/' + username + '\n' +
+              '• Обновить его, отправив новое фото или аудио'
+            : 'Начните с отправки фото или аудио сообщения!')
+    );
+});
+
 // Handle incoming messages
 bot.on('message', async (msg: any) => {
     const chatId = msg.chat.id;
@@ -76,6 +134,16 @@ bot.on('message', async (msg: any) => {
             fs.writeFileSync(photoPath, Buffer.from(buffer));
 
             await bot.sendMessage(chatId, 'Фото успешно сохранено!');
+            
+            // Check if user has both files and send link if they do
+            if (checkUserFiles(userDir)) {
+                await sendUserPageLink(chatId, username);
+            } else {
+                await bot.sendMessage(
+                    chatId,
+                    'Теперь отправьте аудио сообщение, чтобы завершить ваше поздравление!'
+                );
+            }
         } catch (error) {
             console.error('Error saving photo:', error);
             await bot.sendMessage(chatId, 'Ошибка при сохранении фото. Пожалуйста, попробуйте еще раз.');
@@ -101,6 +169,16 @@ bot.on('message', async (msg: any) => {
             fs.writeFileSync(audioPath, Buffer.from(buffer));
 
             await bot.sendMessage(chatId, 'Аудио успешно сохранено!');
+            
+            // Check if user has both files and send link if they do
+            if (checkUserFiles(userDir)) {
+                await sendUserPageLink(chatId, username);
+            } else {
+                await bot.sendMessage(
+                    chatId,
+                    'Теперь отправьте фото, чтобы завершить ваше поздравление!'
+                );
+            }
         } catch (error) {
             console.error('Error saving audio:', error);
             await bot.sendMessage(chatId, 'Ошибка при сохранении аудио. Пожалуйста, попробуйте еще раз.');
