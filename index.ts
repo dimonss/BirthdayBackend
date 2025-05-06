@@ -1,10 +1,16 @@
 import TelegramBot from 'node-telegram-bot-api';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import * as dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
+
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // File size limits in bytes
 const PHOTO_SIZE_LIMIT = 500 * 1024; // 500KB
