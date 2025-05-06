@@ -1,34 +1,41 @@
 import TelegramBot from 'node-telegram-bot-api';
 import * as fs from 'fs';
 import * as path from 'path';
-import {fileURLToPath} from 'url';
-import {dirname} from 'path';
 import * as dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 // File size limits in bytes
 const PHOTO_SIZE_LIMIT = 500 * 1024; // 500KB
 const AUDIO_SIZE_LIMIT = 1024 * 1024; // 1MB
 
-// Get bot token from environment variables
+// Get environment variables
 const BOT_TOKEN = process.env.BOT_TOKEN;
+const USER_PAGE_URL = process.env.USER_PAGE_URL;
+const PAGES_DIR = process.env.PAGES_DIR;
+
 if (!BOT_TOKEN) {
     throw new Error('BOT_TOKEN is not defined in environment variables');
 }
-console.log('BOT_TOKEN');
-console.log(BOT_TOKEN);
+
+if (!USER_PAGE_URL) {
+    throw new Error('USER_PAGE_URL is not defined in environment variables');
+}
+
+if (!PAGES_DIR) {
+    throw new Error('PAGES_DIR is not defined in environment variables');
+}
+
+// Telegram API URL
+const TELEGRAM_API_URL = `https://api.telegram.org/file/bot${BOT_TOKEN}`;
+
 // Initialize bot with your token
-const bot = new TelegramBot(BOT_TOKEN, {polling: true});
+const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 // Create pages directory if it doesn't exist
-const pagesDir = path.join(__dirname, 'pages');
-if (!fs.existsSync(pagesDir)) {
-    fs.mkdirSync(pagesDir);
+if (!fs.existsSync(PAGES_DIR)) {
+    fs.mkdirSync(PAGES_DIR);
 }
 
 // Function to check if user has both photo and audio
@@ -40,7 +47,7 @@ const checkUserFiles = (userDir: string): boolean => {
 
 // Function to send user's page link
 const sendUserPageLink = async (chatId: number, username: string) => {
-    const userPageUrl = `https://chalysh.tech/birthday/pages/${username}`;
+    const userPageUrl = `${USER_PAGE_URL}/${username}`;
     await bot.sendMessage(
         chatId,
         `Ваша страница с поздравлением готова!\n\n` +
@@ -77,7 +84,7 @@ bot.onText(/\/start/, async (msg) => {
         return;
     }
 
-    const userDir = path.join(pagesDir, username);
+    const userDir = path.join(PAGES_DIR, username);
     const hasFiles = fs.existsSync(userDir) && checkUserFiles(userDir);
 
     await bot.sendMessage(
@@ -90,7 +97,7 @@ bot.onText(/\/start/, async (msg) => {
         '3. Получите ссылку на вашу персональную страницу с поздравлением\n\n' +
         (hasFiles 
             ? 'У вас уже есть готовое поздравление! Вы можете:\n' +
-              '• Посмотреть его по ссылке: https://chalysh.tech/birthday/pages/' + username + '\n' +
+              '• Посмотреть его по ссылке: ' + `${USER_PAGE_URL}/${username}\n` +
               '• Обновить его, отправив новое фото или аудио'
             : 'Начните с отправки фото или аудио сообщения!')
     );
@@ -117,7 +124,7 @@ bot.on('message', async (msg: any) => {
         return;
     }
 
-    const userDir = path.join(pagesDir, username);
+    const userDir = path.join(PAGES_DIR, username);
 
     // Create user directory if it doesn't exist
     if (!fs.existsSync(userDir)) {
@@ -147,7 +154,7 @@ bot.on('message', async (msg: any) => {
             const filePath = file.file_path;
             
             // Download the file
-            const photoUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
+            const photoUrl = `${TELEGRAM_API_URL}/${filePath}`;
             const response = await fetch(photoUrl);
             const buffer = await response.arrayBuffer();
             
@@ -192,7 +199,7 @@ bot.on('message', async (msg: any) => {
             const filePath = file.file_path;
             
             // Download the file
-            const audioUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
+            const audioUrl = `${TELEGRAM_API_URL}/${filePath}`;
             const response = await fetch(audioUrl);
             const buffer = await response.arrayBuffer();
             
