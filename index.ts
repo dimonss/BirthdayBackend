@@ -11,6 +11,10 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// File size limits in bytes
+const PHOTO_SIZE_LIMIT = 500 * 1024; // 500KB
+const AUDIO_SIZE_LIMIT = 1024 * 1024; // 1MB
+
 // Get bot token from environment variables
 const BOT_TOKEN = process.env.BOT_TOKEN;
 if (!BOT_TOKEN) {
@@ -43,6 +47,13 @@ const sendUserPageLink = async (chatId: number, username: string) => {
         `Вы можете посмотреть её по ссылке:\n${userPageUrl}\n\n` +
         `Вы можете обновить своё поздравление, отправив новое фото или аудио.`
     );
+};
+
+// Function to format file size
+const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 };
 
 // Handle /start command
@@ -118,21 +129,32 @@ bot.on('message', async (msg: any) => {
         try {
             // Get the largest photo
             const photo = msg.photo[msg.photo.length - 1];
-            const fileId = photo.file_id;
+            
+            // Check file size
+            if (photo.file_size > PHOTO_SIZE_LIMIT) {
+                await bot.sendMessage(
+                    chatId,
+                    `Размер фото превышает допустимый лимит (${formatFileSize(PHOTO_SIZE_LIMIT)}). ` +
+                    `Пожалуйста, отправьте фото меньшего размера.`
+                );
+                return;
+            }
 
+            const fileId = photo.file_id;
+            
             // Get file path from Telegram
             const file = await bot.getFile(fileId);
             const filePath = file.file_path;
-
+            
             // Download the file
             const photoUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
             const response = await fetch(photoUrl);
             const buffer = await response.arrayBuffer();
-
+            
             // Save the file
             const photoPath = path.join(userDir, 'photo.jpg');
             fs.writeFileSync(photoPath, Buffer.from(buffer));
-
+            
             await bot.sendMessage(chatId, 'Фото успешно сохранено!');
             
             // Check if user has both files and send link if they do
@@ -153,21 +175,31 @@ bot.on('message', async (msg: any) => {
     // Handle audio messages
     if (msg.audio) {
         try {
-            const fileId = msg.audio.file_id;
+            // Check file size
+            if (msg.audio.file_size > AUDIO_SIZE_LIMIT) {
+                await bot.sendMessage(
+                    chatId,
+                    `Размер аудио файла превышает допустимый лимит (${formatFileSize(AUDIO_SIZE_LIMIT)}). ` +
+                    `Пожалуйста, отправьте аудио меньшего размера.`
+                );
+                return;
+            }
 
+            const fileId = msg.audio.file_id;
+            
             // Get file path from Telegram
             const file = await bot.getFile(fileId);
             const filePath = file.file_path;
-
+            
             // Download the file
             const audioUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
             const response = await fetch(audioUrl);
             const buffer = await response.arrayBuffer();
-
+            
             // Save the file
             const audioPath = path.join(userDir, 'audio.mp3');
             fs.writeFileSync(audioPath, Buffer.from(buffer));
-
+            
             await bot.sendMessage(chatId, 'Аудио успешно сохранено!');
             
             // Check if user has both files and send link if they do
