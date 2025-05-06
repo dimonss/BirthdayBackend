@@ -38,9 +38,20 @@ if (!fs.existsSync(PAGES_DIR)) {
     fs.mkdirSync(PAGES_DIR);
 }
 
+// Function to copy HTML template
+const copyHtmlTemplate = (userDir: string) => {
+    const templatePath = path.join(__dirname, 'htmlTemplate', 'index.html');
+    const targetPath = path.join(userDir, 'index.html');
+    
+    // Check if index.html already exists
+    if (!fs.existsSync(targetPath)) {
+        fs.copyFileSync(templatePath, targetPath);
+    }
+};
+
 // Function to check if user has both photo and audio
 const checkUserFiles = (userDir: string): boolean => {
-    const photoPath = path.join(userDir, 'photo.jpg');
+    const photoPath = path.join(userDir, 'img.jpg');
     const audioPath = path.join(userDir, 'audio.mp3');
     return fs.existsSync(photoPath) && fs.existsSync(audioPath);
 };
@@ -159,13 +170,14 @@ bot.on('message', async (msg: any) => {
             const buffer = await response.arrayBuffer();
             
             // Save the file
-            const photoPath = path.join(userDir, 'photo.jpg');
+            const photoPath = path.join(userDir, 'img.jpg');
             fs.writeFileSync(photoPath, Buffer.from(buffer));
             
             await bot.sendMessage(chatId, 'Фото успешно сохранено!');
             
             // Check if user has both files and send link if they do
             if (checkUserFiles(userDir)) {
+                copyHtmlTemplate(userDir);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -211,6 +223,7 @@ bot.on('message', async (msg: any) => {
             
             // Check if user has both files and send link if they do
             if (checkUserFiles(userDir)) {
+                copyHtmlTemplate(userDir);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(

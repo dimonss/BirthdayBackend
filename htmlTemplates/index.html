@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+    }
+    body {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle, rgba(255, 105, 180, 0.8), rgba(255, 165, 0, 0.8)),
+      linear-gradient(45deg, #ff69b4, #87ceeb, #32cd32, #ffa500, #ff4500);
+      background-size: 400% 400%;
+      animation: gradientChange 15s ease infinite;
+      overflow: hidden;
+    }
+    .container {
+      position: relative;
+      text-align: center;
+      color: white;
+      z-index: 2;
+    }
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      display: inline-block;
+    }
+    .image-wrapper img {
+      max-width: 80%;
+      height: auto;
+      display: block;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      margin: 0 auto;
+    }
+    .message {
+      font-size: 3rem;
+      font-weight: bold;
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: float 6s ease-in-out infinite, colorChange 5s ease-in-out infinite, glow 1.5s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(255, 105, 180, 0.7), 0 0 20px rgba(255, 105, 180, 0.5), 0 0 30px rgba(255, 105, 180, 0.3);
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+    }
+    @keyframes float {
+      0% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-20px); }
+      100% { transform: translate(-50%, -50%) translateY(0); }
+    }
+    @keyframes colorChange {
+      0% { color: #ff69b4; } /* Розовый */
+      25% { color: #87ceeb; } /* Голубой */
+      50% { color: #32cd32; } /* Зелёный */
+      75% { color: #ffa500; } /* Оранжевый */
+      100% { color: #ff4500; } /* Красный */
+    }
+    @keyframes glow {
+      0% { text-shadow: 0 0 10px rgba(255, 105, 180, 0.7); }
+      50% { text-shadow: 0 0 30px rgba(255, 105, 180, 0.5); }
+      100% { text-shadow: 0 0 10px rgba(255, 105, 180, 0.7); }
+    }
+    .confetti {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .confetti div {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: rgba(255, 105, 180, 0.8);
+      opacity: 0.9;
+      animation: confettiFall 5s linear infinite;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-100vh) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      animation: twinkle 1.5s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+    .star:nth-child(odd) { animation-duration: 2s; }
+    .star:nth-child(even) { animation-duration: 3s; }
+    /* Абстрактные формы на фоне */
+    .abstract-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .abstract-shape {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: moveShape 10s ease-in-out infinite, fadeShape 5s ease-in-out infinite;
+    }
+    @keyframes moveShape {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(200px, 200px); }
+      100% { transform: translate(0, 0); }
+    }
+    @keyframes fadeShape {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+}
+</style>
+</head>
+<body onclick="unmuteAudio()">
+<div class="container">
+  <div class="image-wrapper">
+    <img src="./img.png" alt="Happy Birthday Image">
+    <div class="message">С днём рождения!</div>
+  </div>
+</div>
+<div class="confetti">
+  <!-- Генерация конфетти -->
+  <div style="left: 10%; animation-delay: 0s; background-color: #ff69b4; width: 8px; height: 8px;"></div>
+  <div style="left: 20%; animation-delay: 1s; background-color: #87ceeb; width: 12px; height: 12px;"></div>
+  <div style="left: 30%; animation-delay: 2s; background-color: #32cd32; width: 10px; height: 10px;"></div>
+  <div style="left: 40%; animation-delay: 1.5s; background-color: #ffa500; width: 15px; height: 15px;"></div>
+  <div style="left: 50%; animation-delay: 2.5s; background-color: #ff4500; width: 7px; height: 7px;"></div>
+</div>
+<div class="stars">
+  <!-- Генерация случайных звёзд -->
+  <div class="star" style="top: 10%; left: 15%;"></div>
+  <div class="star" style="top: 20%; left: 30%;"></div>
+  <div class="star" style="top: 30%; left: 50%;"></div>
+  <div class="star" style="top: 40%; left: 70%;"></div>
+  <div class="star" style="top: 50%; left: 85%;"></div>
+</div>
+<div class="abstract-shapes">
+  <!-- Генерация абстрактных форм -->
+  <div class="abstract-shape" style="top: 10%; left: 10%; width: 100px; height: 100px;"></div>
+  <div class="abstract-shape" style="top: 40%; left: 50%; width: 150px; height: 150px;"></div>
+  <div class="abstract-shape" style="top: 70%; left: 30%; width: 200px; height: 200px;"></div>
+  <div class="abstract-shape" style="top: 20%; left: 80%; width: 120px; height: 120px;"></div>
+</div>
+<audio id="audio" autoplay muted>
+  <source src="./audio.mp3" type="audio/mp3">
+  Your browser does not support the audio element.
+</audio>
+<script>
+  const audio = document.getElementById('audio');
+  window.onload = function() {
+    unmuteAudio();
+    audio.play().then(() => {
+      console.log("Audio is playing");
+    }).catch(error => {
+      console.log("Autoplay blocked, user interaction required", error);
+    });
+  };
+  function unmuteAudio() {
+    audio.muted = false;
+    audio.play();
+  }
+</script>
+</body>
+</html>
