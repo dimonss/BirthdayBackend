@@ -3,6 +3,7 @@
 /static
 /.idea
 /pages
+/dist
 
 # production
 /build
