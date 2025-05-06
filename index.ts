@@ -46,7 +46,7 @@ if (!fs.existsSync(PAGES_DIR)) {
 
 // Function to copy HTML template
 const copyHtmlTemplate = (userDir: string) => {
-    const templatePath = path.join(__dirname, '..', 'htmlTemplate', 'index.html');
+    const templatePath = path.join(__dirname, '..', 'htmlTemplates', 'index.html');
     const targetPath = path.join(userDir, 'index.html');
     
     // Check if index.html already exists
