@@ -39,6 +39,14 @@ const TELEGRAM_API_URL = `https://api.telegram.org/file/bot${BOT_TOKEN}`;
 // Initialize bot with your token
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
+// Set bot commands
+bot.setMyCommands([
+    { command: '/start', description: 'Начать работу с ботом' },
+    { command: '/help', description: 'Показать справку' },
+    { command: '/status', description: 'Проверить статус вашего поздравления' },
+    { command: '/delete', description: 'Удалить ваше поздравление' }
+]);
+
 // Create pages directory if it doesn't exist
 if (!fs.existsSync(PAGES_DIR)) {
     fs.mkdirSync(PAGES_DIR);
@@ -241,6 +249,86 @@ bot.on('message', async (msg: any) => {
             console.error('Error saving audio:', error);
             await bot.sendMessage(chatId, 'Ошибка при сохранении аудио. Пожалуйста, попробуйте еще раз.');
         }
+    }
+});
+
+// Handle /help command
+bot.onText(/\/help/, async (msg) => {
+    const chatId = msg.chat.id;
+    await bot.sendMessage(
+        chatId,
+        '📚 Справка по использованию бота:\n\n' +
+        '1. /start - Начать работу с ботом\n' +
+        '2. /help - Показать эту справку\n' +
+        '3. /status - Проверить статус вашего поздравления\n' +
+        '4. /delete - Удалить ваше поздравление\n\n' +
+        'Как создать поздравление:\n' +
+        '1. Отправьте фото (до 500KB)\n' +
+        '2. Отправьте аудио сообщение (до 1MB)\n' +
+        '3. Получите ссылку на вашу страницу\n\n' +
+        'Вы можете обновить своё поздравление в любой момент, отправив новое фото или аудио.'
+    );
+});
+
+// Handle /status command
+bot.onText(/\/status/, async (msg) => {
+    const chatId = msg.chat.id;
+    const username = msg.from?.username;
+
+    if (!username) {
+        await bot.sendMessage(
+            chatId,
+            'Для проверки статуса необходимо установить username в настройках Telegram.'
+        );
+        return;
+    }
+
+    const userDir = path.join(PAGES_DIR, username);
+    const hasPhoto = fs.existsSync(path.join(userDir, 'img.jpg'));
+    const hasAudio = fs.existsSync(path.join(userDir, 'audio.mp3'));
+
+    let statusMessage = '📊 Статус вашего поздравления:\n\n';
+    statusMessage += `Фото: ${hasPhoto ? '✅ Загружено' : '❌ Отсутствует'}\n`;
+    statusMessage += `Аудио: ${hasAudio ? '✅ Загружено' : '❌ Отсутствует'}\n\n`;
+
+    if (hasPhoto && hasAudio) {
+        statusMessage += `Ваше поздравление готово!\nПосмотреть его можно здесь:\n${USER_PAGE_URL}/${username}`;
+    } else {
+        statusMessage += 'Для завершения поздравления необходимо загрузить оба файла.';
+    }
+
+    await bot.sendMessage(chatId, statusMessage);
+});
+
+// Handle /delete command
+bot.onText(/\/delete/, async (msg) => {
+    const chatId = msg.chat.id;
+    const username = msg.from?.username;
+
+    if (!username) {
+        await bot.sendMessage(
+            chatId,
+            'Для удаления поздравления необходимо установить username в настройках Telegram.'
+        );
+        return;
+    }
+
+    const userDir = path.join(PAGES_DIR, username);
+    
+    if (!fs.existsSync(userDir)) {
+        await bot.sendMessage(chatId, 'У вас пока нет загруженных файлов.');
+        return;
+    }
+
+    try {
+        fs.rmSync(userDir, { recursive: true, force: true });
+        await bot.sendMessage(
+            chatId,
+            '✅ Ваше поздравление успешно удалено.\nВы можете создать новое, отправив фото и аудио.'
+        );
+    } catch (error) {
+        console.error('Error deleting user directory:', error);
+        await bot.sendMessage(chatId, '❌ Произошла ошибка при удалении файлов. Пожалуйста, попробуйте позже.');
     }
 });
 
