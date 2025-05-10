@@ -206,10 +206,12 @@ bot.on('message', async (msg: any) => {
     }
 
     // Handle audio messages
-    if (msg.audio) {
+    if (msg.audio || msg.voice) {
         try {
+            const audioData = msg.audio || msg.voice;
+            
             // Check file size
-            if (msg.audio.file_size > AUDIO_SIZE_LIMIT) {
+            if (audioData.file_size > AUDIO_SIZE_LIMIT) {
                 await bot.sendMessage(
                     chatId,
                     `Размер аудио файла превышает допустимый лимит (${formatFileSize(AUDIO_SIZE_LIMIT)}). ` +
@@ -218,7 +220,7 @@ bot.on('message', async (msg: any) => {
                 return;
             }
 
-            const fileId = msg.audio.file_id;
+            const fileId = audioData.file_id;
             
             // Get file path from Telegram
             const file = await bot.getFile(fileId);
