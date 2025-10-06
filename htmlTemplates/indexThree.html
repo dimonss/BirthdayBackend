@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Birthday Celebration</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --rose-gold: #e8b4b8;
+            --cream: #f5f5dc;
+            --deep-purple: #4a148c;
+            --soft-pink: #fce4ec;
+            --text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, var(--deep-purple) 0%, var(--rose-gold) 50%, var(--gold) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--cream);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Vintage frame background */
+        .vintage-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="ornament" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(212,175,55,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23ornament)"/></svg>');
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+        }
+
+        .elegant-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 3rem 2rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .elegant-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        .image-wrapper {
+            position: relative;
+            margin: 2rem 0;
+            display: inline-block;
+        }
+
+        .image-wrapper img {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            box-shadow: 
+                0 0 30px rgba(212, 175, 55, 0.5),
+                0 0 60px rgba(212, 175, 55, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 0 40px rgba(212, 175, 55, 0.7),
+                0 0 80px rgba(212, 175, 55, 0.4);
+        }
+
+        .decorative-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            border: 2px solid var(--rose-gold);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .decorative-ring::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: pulse 3s ease-in-out infinite reverse;
+        }
+
+        .message {
+            font-size: 2.8rem;
+            font-weight: 300;
+            margin: 2rem 0;
+            background: linear-gradient(45deg, var(--gold), var(--rose-gold), var(--cream));
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 4s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+
+        .ornamental-border {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .ornamental-border::before,
+        .ornamental-border::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+        }
+
+        .ornamental-border::before {
+            top: -10px;
+            left: -10px;
+        }
+
+        .ornamental-border::after {
+            bottom: -10px;
+            right: -10px;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: floatUp 8s linear infinite;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--cream);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .audio-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, var(--gold), var(--rose-gold));
+            border: none;
+            border-radius: 50%;
+            color: var(--deep-purple);
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .audio-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .audio-button.muted {
+            background: linear-gradient(145deg, #666, #888);
+            color: #ccc;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .message {
+                font-size: 2.2rem;
+            }
+            
+            .image-wrapper img {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .decorative-ring {
+                width: 230px;
+                height: 230px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="vintage-frame"></div>
+    
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="elegant-card">
+            <div class="ornamental-border"></div>
+            
+            <div class="image-wrapper">
+                <div class="decorative-ring"></div>
+                <img src="./img.jpg" alt="Birthday Celebration">
+                <div class="sparkle" style="top: 20%; left: 20%; animation-delay: 0s;"></div>
+                <div class="sparkle" style="top: 30%; right: 20%; animation-delay: 0.5s;"></div>
+                <div class="sparkle" style="bottom: 20%; left: 30%; animation-delay: 1s;"></div>
+                <div class="sparkle" style="bottom: 30%; right: 30%; animation-delay: 1.5s;"></div>
+            </div>
+            
+            <div class="message">С днём рождения!</div>
+        </div>
+    </div>
+
+    <button class="audio-button" onclick="toggleAudio()" id="audioButton">🎵</button>
+
+    <audio id="audio" loop>
+        <source src="./audio.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const audioButton = document.getElementById('audioButton');
+        let isMuted = true;
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            audioButton.classList.toggle('muted');
+            audioButton.textContent = isMuted ? '🔇' : '🎵';
+
+            if (!isMuted) {
+                audio.play().catch(error => {
+                    console.log("Autoplay blocked:", error);
+                });
+            }
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                
+                // Random colors
+                const colors = ['var(--gold)', 'var(--rose-gold)', 'var(--cream)'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function createSparkles() {
+            const imageWrapper = document.querySelector('.image-wrapper');
+            const sparkleCount = 8;
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparkle.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+                imageWrapper.appendChild(sparkle);
+            }
+        }
+
+        window.onload = function() {
+            createParticles();
+            createSparkles();
+            toggleAudio(); // Start muted
+        };
+    </script>
+</body>
+</html>
