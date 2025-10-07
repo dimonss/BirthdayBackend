@@ -43,6 +43,7 @@ const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 bot.setMyCommands([
     { command: '/start', description: 'Начать работу с ботом' },
     { command: '/help', description: 'Показать справку' },
+    { command: '/template', description: 'Выбрать шаблон для поздравления' },
     { command: '/status', description: 'Проверить статус вашего поздравления' },
     { command: '/delete', description: 'Удалить ваше поздравление' }
 ]);
@@ -52,15 +53,30 @@ if (!fs.existsSync(PAGES_DIR)) {
     fs.mkdirSync(PAGES_DIR);
 }
 
+// Available templates
+const AVAILABLE_TEMPLATES = [
+    { id: 'indexFirst', name: '🎨 Яркий и веселый', description: 'Цветной шаблон с конфетти и анимациями' },
+    { id: 'indexTwo', name: '🌙 Современный темный', description: 'Стильный темный шаблон с эффектами стекла' },
+    { id: 'indexThree', name: '✨ Элегантный золотой', description: 'Изысканный шаблон в золотых тонах' }
+];
+
+// User template preferences storage
+const userTemplates = new Map<string, string>();
+
 // Function to copy HTML template
-const copyHtmlTemplate = (userDir: string) => {
-    const templatePath = path.join(__dirname, '..', 'htmlTemplates', 'indexFirst.html');
-    const targetPath = path.join(userDir, 'indexFirst.html');
+const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst') => {
+    const templatePath = path.join(__dirname, 'htmlTemplates', `${templateId}.html`);
+    const targetPath = path.join(userDir, 'index.html');
     
-    // Check if indexFirst.html already exists
-    if (!fs.existsSync(targetPath)) {
-        fs.copyFileSync(templatePath, targetPath);
+    // Check if template exists
+    if (!fs.existsSync(templatePath)) {
+        console.error(`Template ${templateId} not found, using default`);
+        const defaultTemplatePath = path.join(__dirname, 'htmlTemplates', 'indexFirst.html');
+        fs.copyFileSync(defaultTemplatePath, targetPath);
+        return;
     }
+    
+    fs.copyFileSync(templatePath, targetPath);
 };
 
 // Function to check if user has both photo and audio
@@ -112,19 +128,29 @@ bot.onText(/\/start/, async (msg) => {
     const userDir = path.join(PAGES_DIR, username);
     const hasFiles = fs.existsSync(userDir) && checkUserFiles(userDir);
 
+    const selectedTemplate = userTemplates.get(username);
+    const templateInfo = selectedTemplate 
+        ? AVAILABLE_TEMPLATES.find(t => t.id === selectedTemplate)
+        : null;
+
     await bot.sendMessage(
         chatId,
         'Добро пожаловать! 👋\n\n' +
         'Этот бот поможет вам создать персональное поздравление с днем рождения!\n\n' +
         'Как это работает:\n' +
-        '1. Отправьте фото для вашего поздравления\n' +
-        '2. Отправьте аудио сообщение с вашими пожеланиями\n' +
-        '3. Получите ссылку на вашу персональную страницу с поздравлением\n\n' +
+        '1. Выберите шаблон командой /template\n' +
+        '2. Отправьте фото для вашего поздравления\n' +
+        '3. Отправьте аудио сообщение с вашими пожеланиями\n' +
+        '4. Получите ссылку на вашу персональную страницу с поздравлением\n\n' +
+        (templateInfo 
+            ? `Выбранный шаблон: ${templateInfo.name}\n\n`
+            : '') +
         (hasFiles 
             ? 'У вас уже есть готовое поздравление! Вы можете:\n' +
               '• Посмотреть его по ссылке: ' + `${USER_PAGE_URL}/${username}\n` +
+              '• Изменить шаблон командой /template\n' +
               '• Обновить его, отправив новое фото или аудио'
-            : 'Начните с отправки фото или аудио сообщения!')
+            : 'Начните с выбора шаблона командой /template!')
     );
 });
 
@@ -191,7 +217,8 @@ bot.on('message', async (msg: any) => {
             
             // Check if user has both files and send link if they do
             if (checkUserFiles(userDir)) {
-                copyHtmlTemplate(userDir);
+                const selectedTemplate = userTemplates.get(username) || 'indexFirst';
+                copyHtmlTemplate(userDir, selectedTemplate);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -239,7 +266,8 @@ bot.on('message', async (msg: any) => {
             
             // Check if user has both files and send link if they do
             if (checkUserFiles(userDir)) {
-                copyHtmlTemplate(userDir);
+                const selectedTemplate = userTemplates.get(username) || 'indexFirst';
+                copyHtmlTemplate(userDir, selectedTemplate);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -254,6 +282,80 @@ bot.on('message', async (msg: any) => {
     }
 });
 
+// Handle /template command
+bot.onText(/\/template/, async (msg) => {
+    const chatId = msg.chat.id;
+    const username = msg.from?.username;
+
+    if (!username) {
+        await bot.sendMessage(
+            chatId,
+            'Для выбора шаблона необходимо установить username в настройках Telegram.'
+        );
+        return;
+    }
+
+    const keyboard = {
+        inline_keyboard: AVAILABLE_TEMPLATES.map(template => [
+            {
+                text: template.name,
+                callback_data: `template_${template.id}`
+            }
+        ])
+    };
+
+    let message = '🎨 Выберите шаблон для вашего поздравления:\n\n';
+    AVAILABLE_TEMPLATES.forEach(template => {
+        message += `${template.name}\n${template.description}\n\n`;
+    });
+
+    await bot.sendMessage(chatId, message, { reply_markup: keyboard });
+});
+
+// Handle template selection callback
+bot.on('callback_query', async (callbackQuery) => {
+    const chatId = callbackQuery.message?.chat.id;
+    const username = callbackQuery.from?.username;
+    const data = callbackQuery.data;
+
+    if (!chatId || !username || !data?.startsWith('template_')) {
+        return;
+    }
+
+    const templateId = data.replace('template_', '');
+    const selectedTemplate = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
+
+    if (!selectedTemplate) {
+        await bot.answerCallbackQuery(callbackQuery.id, { text: 'Шаблон не найден' });
+        return;
+    }
+
+    // Save user's template preference
+    userTemplates.set(username, templateId);
+
+    // Update existing page if user has both files
+    const userDir = path.join(PAGES_DIR, username);
+    if (checkUserFiles(userDir)) {
+        copyHtmlTemplate(userDir, templateId);
+    }
+
+    await bot.answerCallbackQuery(callbackQuery.id, { 
+        text: `Выбран шаблон: ${selectedTemplate.name}` 
+    });
+
+    await bot.editMessageText(
+        `✅ Шаблон "${selectedTemplate.name}" выбран!\n\n` +
+        `Описание: ${selectedTemplate.description}\n\n` +
+        (checkUserFiles(userDir) 
+            ? 'Ваша страница обновлена с новым шаблоном!'
+            : 'Когда вы загрузите фото и аудио, будет использован выбранный шаблон.'),
+        {
+            chat_id: chatId,
+            message_id: callbackQuery.message?.message_id
+        }
+    );
+});
+
 // Handle /help command
 bot.onText(/\/help/, async (msg) => {
     const chatId = msg.chat.id;
@@ -262,12 +364,14 @@ bot.onText(/\/help/, async (msg) => {
         '📚 Справка по использованию бота:\n\n' +
         '1. /start - Начать работу с ботом\n' +
         '2. /help - Показать эту справку\n' +
-        '3. /status - Проверить статус вашего поздравления\n' +
-        '4. /delete - Удалить ваше поздравление\n\n' +
+        '3. /template - Выбрать шаблон для поздравления\n' +
+        '4. /status - Проверить статус вашего поздравления\n' +
+        '5. /delete - Удалить ваше поздравление\n\n' +
         'Как создать поздравление:\n' +
-        '1. Отправьте фото (до 500KB)\n' +
-        '2. Отправьте аудио сообщение (до 1MB)\n' +
-        '3. Получите ссылку на вашу страницу\n\n' +
+        '1. Выберите шаблон командой /template\n' +
+        '2. Отправьте фото (до 500KB)\n' +
+        '3. Отправьте аудио сообщение (до 1MB)\n' +
+        '4. Получите ссылку на вашу страницу\n\n' +
         'Вы можете обновить своё поздравление в любой момент, отправив новое фото или аудио.'
     );
 });
@@ -289,14 +393,26 @@ bot.onText(/\/status/, async (msg) => {
     const hasPhoto = fs.existsSync(path.join(userDir, 'img.jpg'));
     const hasAudio = fs.existsSync(path.join(userDir, 'audio.mp3'));
 
+    const selectedTemplate = userTemplates.get(username);
+    const templateInfo = selectedTemplate 
+        ? AVAILABLE_TEMPLATES.find(t => t.id === selectedTemplate)
+        : null;
+
     let statusMessage = '📊 Статус вашего поздравления:\n\n';
     statusMessage += `Фото: ${hasPhoto ? '✅ Загружено' : '❌ Отсутствует'}\n`;
-    statusMessage += `Аудио: ${hasAudio ? '✅ Загружено' : '❌ Отсутствует'}\n\n`;
+    statusMessage += `Аудио: ${hasAudio ? '✅ Загружено' : '❌ Отсутствует'}\n`;
+    statusMessage += `Шаблон: ${templateInfo ? `✅ ${templateInfo.name}` : '❌ Не выбран'}\n\n`;
 
     if (hasPhoto && hasAudio) {
         statusMessage += `Ваше поздравление готово!\nПосмотреть его можно здесь:\n${USER_PAGE_URL}/${username}`;
+        if (templateInfo) {
+            statusMessage += `\n\nИспользуется шаблон: ${templateInfo.name}`;
+        }
     } else {
-        statusMessage += 'Для завершения поздравления необходимо загрузить оба файла.';
+        statusMessage += 'Для завершения поздравления необходимо:\n';
+        if (!templateInfo) statusMessage += '• Выбрать шаблон командой /template\n';
+        if (!hasPhoto) statusMessage += '• Загрузить фото\n';
+        if (!hasAudio) statusMessage += '• Загрузить аудио';
     }
 
     await bot.sendMessage(chatId, statusMessage);
@@ -324,9 +440,11 @@ bot.onText(/\/delete/, async (msg) => {
 
     try {
         fs.rmSync(userDir, { recursive: true, force: true });
+        // Clear template preference
+        userTemplates.delete(username);
         await bot.sendMessage(
             chatId,
-            '✅ Ваше поздравление успешно удалено.\nВы можете создать новое, отправив фото и аудио.'
+            '✅ Ваше поздравление успешно удалено.\nВы можете создать новое, выбрав шаблон командой /template.'
         );
     } catch (error) {
         console.error('Error deleting user directory:', error);
