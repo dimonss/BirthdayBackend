@@ -65,13 +65,14 @@ const userTemplates = new Map<string, string>();
 
 // Function to copy HTML template
 const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst') => {
-    const templatePath = path.join(__dirname, 'htmlTemplates', `${templateId}.html`);
+    // Go up one level from dist directory to find htmlTemplates
+    const templatePath = path.join(__dirname, '..', 'htmlTemplates', `${templateId}.html`);
     const targetPath = path.join(userDir, 'index.html');
     
     // Check if template exists
     if (!fs.existsSync(templatePath)) {
         console.error(`Template ${templateId} not found, using default`);
-        const defaultTemplatePath = path.join(__dirname, 'htmlTemplates', 'indexFirst.html');
+        const defaultTemplatePath = path.join(__dirname, '..', 'htmlTemplates', 'indexFirst.html');
         fs.copyFileSync(defaultTemplatePath, targetPath);
         return;
     }
