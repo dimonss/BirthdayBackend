@@ -100,9 +100,15 @@ const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst', ev
     // Read template content
     let templateContent = fs.readFileSync(templatePath, 'utf8');
     
-    // Replace the default birthday text with event-specific text
+    // Get the new event text
     const eventText = EVENT_TEXTS[eventId as keyof typeof EVENT_TEXTS] || EVENT_TEXTS.birthday;
-    templateContent = templateContent.replace(/С днём рождения!/g, eventText);
+    
+    // Replace the content inside the element with class "message"
+    // This is more reliable than searching for specific text
+    templateContent = templateContent.replace(
+        /<div class="message">.*?<\/div>/g, 
+        `<div class="message">${eventText}</div>`
+    );
     
     // Write the modified content to target file
     fs.writeFileSync(targetPath, templateContent);
