@@ -69,18 +69,26 @@ const AVAILABLE_EVENTS = [
     { id: 'birth', name: '👶 Рождение ребенка', description: 'Поздравление с рождением ребенка' }
 ];
 
+// Event text mapping for templates
+const EVENT_TEXTS = {
+    'birthday': 'С днём рождения!',
+    'anniversary': 'С юбилеем!',
+    'wedding': 'С днём свадьбы!',
+    'birth': 'С рождением малыша!'
+};
+
 // User template preferences storage
 const userTemplates = new Map<string, string>();
 
 // User event preferences storage
 const userEvents = new Map<string, string>();
 
-// Function to copy HTML template
-const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst') => {
+// Function to copy HTML template with dynamic text replacement
+const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst', eventId: string = 'birthday') => {
     // Go up one level from dist directory to find htmlTemplates
     const templatePath = path.join(__dirname, '..', 'htmlTemplates', `${templateId}.html`);
     const targetPath = path.join(userDir, 'index.html');
-
+ 
     // Check if template exists
     if (!fs.existsSync(templatePath)) {
         console.error(`Template ${templateId} not found, using default`);
@@ -88,8 +96,16 @@ const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst') =>
         fs.copyFileSync(defaultTemplatePath, targetPath);
         return;
     }
-
-    fs.copyFileSync(templatePath, targetPath);
+ 
+    // Read template content
+    let templateContent = fs.readFileSync(templatePath, 'utf8');
+    
+    // Replace the default birthday text with event-specific text
+    const eventText = EVENT_TEXTS[eventId as keyof typeof EVENT_TEXTS] || EVENT_TEXTS.birthday;
+    templateContent = templateContent.replace(/С днём рождения!/g, eventText);
+    
+    // Write the modified content to target file
+    fs.writeFileSync(targetPath, templateContent);
 };
 
 // Function to check if user has both photo and audio
@@ -241,7 +257,8 @@ bot.on('message', async (msg: any) => {
             // Check if user has both files and send link if they do
             if (checkUserFiles(userDir)) {
                 const selectedTemplate = userTemplates.get(username) || 'indexFirst';
-                copyHtmlTemplate(userDir, selectedTemplate);
+                const selectedEvent = userEvents.get(username) || 'birthday';
+                copyHtmlTemplate(userDir, selectedTemplate, selectedEvent);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -290,7 +307,8 @@ bot.on('message', async (msg: any) => {
             // Check if user has both files and send link if they do
             if (checkUserFiles(userDir)) {
                 const selectedTemplate = userTemplates.get(username) || 'indexFirst';
-                copyHtmlTemplate(userDir, selectedTemplate);
+                const selectedEvent = userEvents.get(username) || 'birthday';
+                copyHtmlTemplate(userDir, selectedTemplate, selectedEvent);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -328,10 +346,7 @@ bot.onText(/\/event/, async (msg) => {
     };
 
     let message = '🎉 Выберите тип события для поздравления:\n\n';
-    AVAILABLE_EVENTS.forEach(event => {
-        message += `${event.name}\n${event.description}\n\n`;
-    });
-
+    
     await bot.sendMessage(chatId, message, { reply_markup: keyboard });
 });
 
@@ -420,7 +435,8 @@ bot.on('callback_query', async (callbackQuery) => {
         // Update existing page if user has both files
         const userDir = path.join(PAGES_DIR, username);
         if (checkUserFiles(userDir)) {
-            copyHtmlTemplate(userDir, templateId);
+            const selectedEvent = userEvents.get(username) || 'birthday';
+            copyHtmlTemplate(userDir, templateId, selectedEvent);
         }
 
         await bot.answerCallbackQuery(callbackQuery.id, {
