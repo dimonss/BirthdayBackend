@@ -4,12 +4,40 @@
   "description": "Birthday greeting backend with Telegram bot",
   "main": "dist/index.js",
   "type": "module",
+  "author": {
+    "name": "Dmitrii Chalysh",
+    "email": "faimos69@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "telegram",
+    "bot",
+    "birthday",
+    "greetings",
+    "celebration",
+    "media",
+    "photos",
+    "audio",
+    "personalized",
+    "website"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dimonss/BirthdayBackend.git"
+  },
+  "homepage": "https://chalysh.pro/birthday/",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-esm src/index.ts",
     "build": "tsc",
     "watch": "tsc -w",
-    "init-db": "ts-node-esm init-db.ts"
+    "init-db": "ts-node-esm init-db.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
