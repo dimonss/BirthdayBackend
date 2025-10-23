@@ -1,9 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Birthday</title>
+  <title>{{EVENT_TITLE}} | {{TEMPLATE_NAME}}</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="{{EVENT_DESCRIPTION}} с фото и аудио сообщением. Создано с помощью Telegram бота для особых моментов.">
+  <meta name="keywords" content="{{EVENT_KEYWORDS}}, поздравление, персональное, фото, аудио, праздник, торжество">
+  <meta name="author" content="Birthday Greeting Bot">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="{{EVENT_TITLE}} | {{TEMPLATE_NAME}}">
+  <meta property="og:description" content="{{EVENT_DESCRIPTION}} с фото и аудио сообщением.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./img.jpg">
+  <meta property="og:url" content="{{PAGE_URL}}">
+  <meta property="og:site_name" content="Birthday Greeting Bot">
+  <meta property="og:locale" content="ru_RU">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{EVENT_TITLE}} | {{TEMPLATE_NAME}}">
+  <meta name="twitter:description" content="{{EVENT_DESCRIPTION}} с фото и аудио сообщением.">
+  <meta name="twitter:image" content="./img.jpg">
+  
+  <!-- Additional Meta Tags -->
+  <meta name="theme-color" content="#ff69b4">
+  <meta name="msapplication-TileColor" content="#ff69b4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="С днём рождения!">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{EVENT_TITLE}}",
+    "description": "{{EVENT_DESCRIPTION}}",
+    "url": "{{PAGE_URL}}",
+    "author": {
+      "@type": "Organization",
+      "name": "Birthday Greeting Bot"
+    },
+    "datePublished": "{{CREATION_DATE}}",
+    "dateModified": "{{MODIFICATION_DATE}}",
+    "image": "./img.jpg",
+    "mainEntity": {
+      "@type": "Event",
+      "name": "{{EVENT_NAME}}",
+      "description": "{{EVENT_DESCRIPTION}}"
+    }
+  }
+  </script>
   <style>
     html, body {
       height: 100%;

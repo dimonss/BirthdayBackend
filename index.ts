@@ -4,6 +4,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import * as dotenv from 'dotenv';
+import { replaceMetadataMarkers } from './metadata-config.js';
 
 // Load environment variables
 dotenv.config();
@@ -84,7 +85,7 @@ const userTemplates = new Map<string, string>();
 const userEvents = new Map<string, string>();
 
 // Function to copy HTML template with dynamic text replacement
-const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst', eventId: string = 'birthday') => {
+const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst', eventId: string = 'birthday', username?: string) => {
     // Go up one level from dist directory to find htmlTemplates
     const templatePath = path.join(__dirname, '..', 'htmlTemplates', `${templateId}.html`);
     const targetPath = path.join(userDir, 'index.html');
@@ -102,6 +103,19 @@ const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst', ev
     
     // Get the new event text
     const eventText = EVENT_TEXTS[eventId as keyof typeof EVENT_TEXTS] || EVENT_TEXTS.birthday;
+    
+    // Replace metadata markers
+    const pageUrl = username ? `${USER_PAGE_URL}/${username}` : '';
+    const currentDate = new Date().toISOString();
+    
+    templateContent = replaceMetadataMarkers(
+        templateContent,
+        eventId,
+        templateId,
+        pageUrl,
+        currentDate,
+        currentDate
+    );
     
     // Replace the content inside the element with class "message"
     // This is more reliable than searching for specific text
@@ -264,7 +278,7 @@ bot.on('message', async (msg: any) => {
             if (checkUserFiles(userDir)) {
                 const selectedTemplate = userTemplates.get(username) || 'indexFirst';
                 const selectedEvent = userEvents.get(username) || 'birthday';
-                copyHtmlTemplate(userDir, selectedTemplate, selectedEvent);
+                copyHtmlTemplate(userDir, selectedTemplate, selectedEvent, username);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -314,7 +328,7 @@ bot.on('message', async (msg: any) => {
             if (checkUserFiles(userDir)) {
                 const selectedTemplate = userTemplates.get(username) || 'indexFirst';
                 const selectedEvent = userEvents.get(username) || 'birthday';
-                copyHtmlTemplate(userDir, selectedTemplate, selectedEvent);
+                copyHtmlTemplate(userDir, selectedTemplate, selectedEvent, username);
                 await sendUserPageLink(chatId, username);
             } else {
                 await bot.sendMessage(
@@ -379,9 +393,6 @@ bot.onText(/\/template/, async (msg) => {
     };
 
     let message = '🎨 Выберите шаблон для вашего поздравления:\n\n';
-    AVAILABLE_TEMPLATES.forEach(template => {
-        message += `${template.name}\n${template.description}\n\n`;
-    });
 
     await bot.sendMessage(chatId, message, { reply_markup: keyboard });
 });
@@ -409,6 +420,13 @@ bot.on('callback_query', async (callbackQuery) => {
         // Save user's event preference
         userEvents.set(username, eventId);
 
+        // Update existing page if user has both files
+        const userDir = path.join(PAGES_DIR, username);
+        if (checkUserFiles(userDir)) {
+            const selectedTemplate = userTemplates.get(username) || 'indexFirst';
+            copyHtmlTemplate(userDir, selectedTemplate, eventId, username);
+        }
+
         await bot.answerCallbackQuery(callbackQuery.id, {
             text: `Выбрано событие: ${selectedEvent.name}`
         });
@@ -416,7 +434,9 @@ bot.on('callback_query', async (callbackQuery) => {
         await bot.editMessageText(
             `✅ Событие "${selectedEvent.name}" выбрано!\n\n` +
             `Описание: ${selectedEvent.description}\n\n` +
-            'Теперь выберите шаблон командой /template и загрузите фото и аудио для создания поздравления.',
+            (checkUserFiles(userDir)
+                ? 'Ваша страница обновлена с новым событием!'
+                : 'Теперь выберите шаблон командой /template и загрузите фото и аудио для создания поздравления.'),
             {
                 chat_id: chatId,
                 message_id: callbackQuery.message?.message_id
@@ -442,7 +462,7 @@ bot.on('callback_query', async (callbackQuery) => {
         const userDir = path.join(PAGES_DIR, username);
         if (checkUserFiles(userDir)) {
             const selectedEvent = userEvents.get(username) || 'birthday';
-            copyHtmlTemplate(userDir, templateId, selectedEvent);
+            copyHtmlTemplate(userDir, templateId, selectedEvent, username);
         }
 
         await bot.answerCallbackQuery(callbackQuery.id, {
