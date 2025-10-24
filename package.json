@@ -33,6 +33,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-esm src/index.ts",
+    "dev:preview": "node --loader ts-node/esm dev-server.ts",
     "build": "tsc",
     "watch": "tsc -w",
     "init-db": "ts-node-esm init-db.ts",
