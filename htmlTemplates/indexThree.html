@@ -253,31 +253,37 @@
             animation: sparkle 2s ease-in-out infinite;
         }
 
-        .audio-button {
+        .audio-control {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
             width: 60px;
             height: 60px;
-            background: linear-gradient(145deg, var(--gold), var(--rose-gold));
-            border: none;
-            border-radius: 50%;
-            color: var(--deep-purple);
-            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
 
-        .audio-button:hover {
+        .audio-control:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
         }
 
-        .audio-button.muted {
-            background: linear-gradient(145deg, #666, #888);
-            color: #ccc;
+        .audio-control::before {
+            content: '🔊';
+            font-size: 1.8rem;
+        }
+
+        .audio-control.muted::before {
+            content: '🔇';
         }
 
         @keyframes rotate {
@@ -357,7 +363,7 @@
         </div>
     </div>
 
-    <button class="audio-button" onclick="toggleAudio()" id="audioButton">🎵</button>
+    <div class="audio-control" onclick="toggleAudio()"></div>
 
     <audio id="audio" loop>
         <source src="./audio.mp3" type="audio/mp3">
@@ -366,14 +372,13 @@
 
     <script>
         const audio = document.getElementById('audio');
-        const audioButton = document.getElementById('audioButton');
+        const audioControl = document.querySelector('.audio-control');
         let isMuted = true;
 
         function toggleAudio() {
             isMuted = !isMuted;
             audio.muted = isMuted;
-            audioButton.classList.toggle('muted');
-            audioButton.textContent = isMuted ? '🔇' : '🎵';
+            audioControl.classList.toggle('muted');
 
             if (!isMuted) {
                 audio.play().catch(error => {

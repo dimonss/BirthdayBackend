@@ -182,19 +182,54 @@
       50% { transform: translate(200px, 200px); }
       100% { transform: translate(0, 0); }
     }
-    @keyframes fadeShape {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-}
+        @keyframes fadeShape {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .audio-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .audio-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+        }
+
+        .audio-control::before {
+            content: '🔊';
+            font-size: 1.8rem;
+        }
+
+        .audio-control.muted::before {
+            content: '🔇';
+        }
 </style>
 </head>
-<body onclick="unmuteAudio()">
+<body>
 <div class="container">
   <div class="image-wrapper">
     <img src="./img.jpg" alt="Happy Birthday Image">
     <div class="message">С днём рождения!</div>
   </div>
 </div>
+
+<div class="audio-control" onclick="toggleAudio()"></div>
 <div class="confetti">
   <!-- Генерация конфетти -->
   <div style="left: 10%; animation-delay: 0s; background-color: #ff69b4; width: 8px; height: 8px;"></div>
@@ -224,18 +259,24 @@
 </audio>
 <script>
   const audio = document.getElementById('audio');
-  window.onload = function() {
-    unmuteAudio();
-    audio.play().then(() => {
-      console.log("Audio is playing");
-    }).catch(error => {
-      console.log("Autoplay blocked, user interaction required", error);
-    });
-  };
-  function unmuteAudio() {
-    audio.muted = false;
-    audio.play();
+  const audioControl = document.querySelector('.audio-control');
+  let isMuted = true;
+
+  function toggleAudio() {
+    isMuted = !isMuted;
+    audio.muted = isMuted;
+    audioControl.classList.toggle('muted');
+
+    if (!isMuted) {
+      audio.play().catch(error => {
+        console.log("Autoplay blocked:", error);
+      });
+    }
   }
+
+  window.onload = function() {
+    toggleAudio(); // Start muted
+  };
 </script>
 </body>
 </html>
