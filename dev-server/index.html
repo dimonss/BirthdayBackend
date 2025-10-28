@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Preview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+        }
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .template-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .template-card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .template-card p {
+            color: #666;
+            margin: 10px 0;
+        }
+        .template-card a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .template-card a:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 HTML Template Preview</h1>
+    <div class="templates-grid">
+        {{{TEMPLATES_LIST}}}
+    </div>
+    
+    <div style="margin-top: 40px; background: white; border-radius: 10px; padding: 20px;">
+        <h2 style="color: #333; margin-top: 0;">📁 Available Files</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <h3 style="color: #667eea; margin: 0 0 10px 0;">🖼️ Images ({{IMAGE_COUNT}})</h3>
+                {{{IMAGE_FILES}}}
+            </div>
+            <div>
+                <h3 style="color: #667eea; margin: 0 0 10px 0;">🎵 Audio ({{AUDIO_COUNT}})</h3>
+                {{{AUDIO_FILES}}}
+            </div>
+        </div>
+        <p style="color: #666; margin-top: 20px; font-size: 12px;">
+            💡 To add your own files, place them in the <code>htmlAssets/</code> folder<br>
+            Supported formats: images (jpg, png, svg, etc.), audio (mp3, wav, etc.)
+        </p>
+    </div>
+</body>
+</html>
