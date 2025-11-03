@@ -128,6 +128,33 @@ const copyHtmlTemplate = (userDir: string, templateId: string = 'indexFirst', ev
     fs.writeFileSync(targetPath, templateContent);
 };
 
+// Function to copy default HTML template (for deleted pages)
+const copyDefaultTemplate = (userDir: string, username?: string) => {
+    const templatePath = path.join(__dirname, '..', 'htmlTemplates', 'default.html');
+    const targetPath = path.join(userDir, 'index.html');
+    
+    // Ensure directory exists
+    if (!fs.existsSync(userDir)) {
+        fs.mkdirSync(userDir, { recursive: true });
+    }
+    
+    // Check if template exists
+    if (!fs.existsSync(templatePath)) {
+        console.error('Default template not found');
+        return;
+    }
+    
+    // Read template content
+    let templateContent = fs.readFileSync(templatePath, 'utf8');
+    
+    // Replace only PAGE_URL marker
+    const pageUrl = username ? `${USER_PAGE_URL}/${username}` : '';
+    templateContent = templateContent.replace(/\{\{PAGE_URL\}\}/g, pageUrl);
+    
+    // Write the modified content to target file
+    fs.writeFileSync(targetPath, templateContent);
+};
+
 // Function to check if user has both photo and audio
 const checkUserFiles = (userDir: string): boolean => {
     const photoPath = path.join(userDir, 'img.jpg');
@@ -585,16 +612,30 @@ bot.onText(/\/delete/, async (msg) => {
     }
 
     try {
-        fs.rmSync(userDir, { recursive: true, force: true });
+        // Remove photo and audio files if they exist
+        const photoPath = path.join(userDir, 'img.jpg');
+        const audioPath = path.join(userDir, 'audio.mp3');
+        
+        if (fs.existsSync(photoPath)) {
+            fs.unlinkSync(photoPath);
+        }
+        if (fs.existsSync(audioPath)) {
+            fs.unlinkSync(audioPath);
+        }
+        
+        // Create default template instead of deleting directory
+        copyDefaultTemplate(userDir, username);
+        
         // Clear template and event preferences
         userTemplates.delete(username);
         userEvents.delete(username);
+        
         await bot.sendMessage(
             chatId,
             '✅ Ваше поздравление успешно удалено.\nВы можете создать новое, выбрав событие командой /event.'
         );
     } catch (error) {
-        console.error('Error deleting user directory:', error);
+        console.error('Error deleting user files:', error);
         await bot.sendMessage(chatId, '❌ Произошла ошибка при удалении файлов. Пожалуйста, попробуйте позже.');
     }
 });
