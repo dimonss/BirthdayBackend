@@ -36,6 +36,12 @@ export const EVENT_METADATA: Record<string, EventMetadata> = {
         description: 'Трогательное поздравление с рождением ребёнка',
         keywords: 'рождение, малыш, ребёнок, поздравление, семья, радость',
         name: 'Рождение ребёнка'
+    },
+    'valentine': {
+        title: 'С Днём влюблённых!',
+        description: 'Романтическое поздравление с Днём святого Валентина',
+        keywords: 'день влюблённых, валентинка, любовь, романтика, 14 февраля',
+        name: 'День святого Валентина'
     }
 };
 
@@ -52,6 +58,10 @@ export const TEMPLATE_METADATA: Record<string, TemplateMetadata> = {
     'indexThree': {
         name: 'Элегантный золотой',
         description: 'Изысканный шаблон в золотых тонах'
+    },
+    'indexValentine': {
+        name: 'Романтический',
+        description: 'Романтический шаблон с сердечками для Дня влюблённых'
     }
 };
 
@@ -67,16 +77,16 @@ export function getTemplateMetadata(templateId: string): TemplateMetadata {
 
 // Функция для замены маркеров в HTML шаблоне
 export function replaceMetadataMarkers(
-    htmlContent: string, 
-    eventId: string, 
-    templateId: string, 
+    htmlContent: string,
+    eventId: string,
+    templateId: string,
     pageUrl: string = '',
     creationDate: string = '',
     modificationDate: string = ''
 ): string {
     const eventMeta = getEventMetadata(eventId);
     const templateMeta = getTemplateMetadata(templateId);
-    
+
     // Заменяем маркеры в HTML
     let result = htmlContent
         .replace(/\{\{EVENT_TITLE\}\}/g, eventMeta.title)
@@ -87,6 +97,6 @@ export function replaceMetadataMarkers(
         .replace(/\{\{PAGE_URL\}\}/g, pageUrl)
         .replace(/\{\{CREATION_DATE\}\}/g, creationDate)
         .replace(/\{\{MODIFICATION_DATE\}\}/g, modificationDate);
-    
+
     return result;
 }

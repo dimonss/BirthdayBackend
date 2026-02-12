@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{EVENT_TITLE}}</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="{{EVENT_DESCRIPTION}} — романтическая открытка с фото и аудио сообщением. Создано с помощью Telegram бота.">
+    <meta name="keywords" content="{{EVENT_KEYWORDS}}, поздравление, романтика, сердечки, фото, аудио, праздник">
+    <meta name="author" content="Birthday Greeting Bot">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{{EVENT_TITLE}}">
+    <meta property="og:description" content="{{EVENT_DESCRIPTION}} — романтическая открытка с фото и аудио сообщением.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./img.jpg">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:site_name" content="Birthday Greeting Bot">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{EVENT_TITLE}}">
+    <meta name="twitter:description"
+        content="{{EVENT_DESCRIPTION}} — романтическая открытка с фото и аудио сообщением.">
+    <meta name="twitter:image" content="./img.jpg">
+
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#b5244f">
+    <meta name="msapplication-TileColor" content="#b5244f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="С Днём влюблённых!">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "{{EVENT_TITLE}}",
+      "description": "{{EVENT_DESCRIPTION}}",
+      "url": "{{PAGE_URL}}",
+      "author": {
+        "@type": "Organization",
+        "name": "Birthday Greeting Bot"
+      },
+      "datePublished": "{{CREATION_DATE}}",
+      "dateModified": "{{MODIFICATION_DATE}}",
+      "image": "./img.jpg",
+      "mainEntity": {
+        "@type": "Event",
+        "name": "{{EVENT_NAME}}",
+        "description": "{{EVENT_DESCRIPTION}}"
+      }
+    }
+    </script>
+    <style>
+        :root {
+            --deep-rose: #b5244f;
+            --hot-pink: #e91e63;
+            --soft-pink: #f8bbd0;
+            --blush: #fce4ec;
+            --wine: #880e4f;
+            --cream: #fff5f7;
+            --gold-accent: #f9a825;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, var(--wine) 0%, var(--deep-rose) 35%, var(--hot-pink) 65%, var(--soft-pink) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--cream);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts container */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -60px;
+            opacity: 0;
+            animation: floatHeart linear infinite;
+            line-height: 1;
+            user-select: none;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0) rotate(-15deg) scale(1);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.85;
+            }
+
+            50% {
+                opacity: 0.65;
+                transform: translateY(-55vh) rotate(15deg) scale(0.85);
+            }
+
+            90% {
+                opacity: 0.25;
+            }
+
+            100% {
+                transform: translateY(-115vh) rotate(-10deg) scale(0.4);
+                opacity: 0;
+            }
+        }
+
+        /* Soft glow overlay */
+        .glow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 50% 50%, rgba(233, 30, 99, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            padding: 1.5rem;
+        }
+
+        .valentine-card {
+            background: linear-gradient(145deg,
+                    rgba(255, 255, 255, 0.12),
+                    rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem 2rem;
+            box-shadow:
+                0 25px 50px rgba(136, 14, 79, 0.4),
+                0 0 80px rgba(233, 30, 99, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Shimmer sweep across the card */
+        .valentine-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(249, 168, 37, 0.08), transparent, rgba(233, 30, 99, 0.08), transparent);
+            animation: cardRotate 12s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes cardRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Heart frame around the photo */
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 1.5rem 0;
+        }
+
+        .image-wrapper img {
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--soft-pink);
+            box-shadow:
+                0 0 30px rgba(233, 30, 99, 0.5),
+                0 0 60px rgba(233, 30, 99, 0.25),
+                0 0 100px rgba(233, 30, 99, 0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.08);
+            box-shadow:
+                0 0 40px rgba(233, 30, 99, 0.7),
+                0 0 80px rgba(233, 30, 99, 0.4),
+                0 0 120px rgba(233, 30, 99, 0.15);
+        }
+
+        /* Pulsing ring around the photo */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border: 2px solid var(--soft-pink);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+
+        .pulse-ring:nth-child(2) {
+            width: 275px;
+            height: 275px;
+            border-color: rgba(248, 187, 208, 0.3);
+            animation-delay: 0.5s;
+        }
+
+        @keyframes ringPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Mini sparkles around the photo */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--gold-accent);
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+
+        /* Message text */
+        .message {
+            font-size: 2.6rem;
+            font-weight: 300;
+            margin: 1.5rem 0 0.5rem;
+            background: linear-gradient(45deg, var(--soft-pink), var(--cream), var(--gold-accent), var(--soft-pink));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textShimmer 5s ease-in-out infinite;
+            letter-spacing: 1.5px;
+            line-height: 1.3;
+        }
+
+        @keyframes textShimmer {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Decorative mini-hearts around the card */
+        .deco-heart {
+            position: absolute;
+            color: rgba(248, 187, 208, 0.5);
+            font-size: 1.2rem;
+            animation: decoFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes decoFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(15deg);
+            }
+        }
+
+        /* Audio control */
+        .audio-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, rgba(233, 30, 99, 0.35), rgba(181, 36, 79, 0.35));
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(248, 187, 208, 0.4);
+        }
+
+        .audio-control:hover {
+            background: linear-gradient(135deg, rgba(233, 30, 99, 0.5), rgba(181, 36, 79, 0.5));
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(233, 30, 99, 0.5);
+        }
+
+        .audio-control::before {
+            content: '🔊';
+            font-size: 1.8rem;
+        }
+
+        .audio-control.muted::before {
+            content: '🔇';
+        }
+
+        /* Ornamental corners */
+        .corner-ornament {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-color: rgba(248, 187, 208, 0.3);
+            border-style: solid;
+        }
+
+        .corner-ornament.tl {
+            top: 15px;
+            left: 15px;
+            border-width: 2px 0 0 2px;
+            border-radius: 8px 0 0 0;
+        }
+
+        .corner-ornament.tr {
+            top: 15px;
+            right: 15px;
+            border-width: 2px 2px 0 0;
+            border-radius: 0 8px 0 0;
+        }
+
+        .corner-ornament.bl {
+            bottom: 15px;
+            left: 15px;
+            border-width: 0 0 2px 2px;
+            border-radius: 0 0 0 8px;
+        }
+
+        .corner-ornament.br {
+            bottom: 15px;
+            right: 15px;
+            border-width: 0 2px 2px 0;
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .message {
+                font-size: 2rem;
+            }
+
+            .image-wrapper img {
+                width: 180px;
+                height: 180px;
+            }
+
+            .pulse-ring {
+                width: 210px;
+                height: 210px;
+            }
+
+            .pulse-ring:nth-child(2) {
+                width: 235px;
+                height: 235px;
+            }
+
+            .valentine-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow-overlay"></div>
+    <div class="hearts-bg" id="hearts-bg"></div>
+
+    <div class="container">
+        <div class="valentine-card">
+            <!-- Corner ornaments -->
+            <div class="corner-ornament tl"></div>
+            <div class="corner-ornament tr"></div>
+            <div class="corner-ornament bl"></div>
+            <div class="corner-ornament br"></div>
+
+            <!-- Decorative hearts on the card -->
+            <div class="deco-heart" style="top: 8%; left: 12%; animation-delay: 0s;">♥</div>
+            <div class="deco-heart" style="top: 15%; right: 10%; animation-delay: 1s;">♥</div>
+            <div class="deco-heart" style="bottom: 12%; left: 8%; animation-delay: 2s;">♥</div>
+            <div class="deco-heart" style="bottom: 8%; right: 14%; animation-delay: 0.5s;">♥</div>
+            <div class="deco-heart" style="top: 45%; left: 5%; animation-delay: 1.5s;">♥</div>
+            <div class="deco-heart" style="top: 40%; right: 5%; animation-delay: 2.5s;">♥</div>
+
+            <!-- Photo -->
+            <div class="image-wrapper">
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
+                <img src="./img.jpg" alt="Valentine's Day">
+                <div class="sparkle" style="top: 5%; left: 10%; animation-delay: 0s;"></div>
+                <div class="sparkle" style="top: 15%; right: 5%; animation-delay: 0.4s;"></div>
+                <div class="sparkle" style="bottom: 10%; left: 5%; animation-delay: 0.8s;"></div>
+                <div class="sparkle" style="bottom: 5%; right: 15%; animation-delay: 1.2s;"></div>
+                <div class="sparkle" style="top: 50%; left: -5%; animation-delay: 1.6s;"></div>
+                <div class="sparkle" style="top: 50%; right: -5%; animation-delay: 2s;"></div>
+            </div>
+
+            <div class="message">С Днём влюблённых!</div>
+        </div>
+    </div>
+
+    <div class="audio-control" onclick="toggleAudio()"></div>
+
+    <audio id="audio" loop>
+        <source src="./audio.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const audioControl = document.querySelector('.audio-control');
+        let isMuted = true;
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            audioControl.classList.toggle('muted');
+
+            if (!isMuted) {
+                audio.play().catch(error => {
+                    console.log("Autoplay blocked:", error);
+                });
+            }
+        }
+
+        // Generate floating hearts in the background
+        function createFloatingHearts() {
+            const container = document.getElementById('hearts-bg');
+            const heartCount = 20;
+            const heartEmojis = ['❤️', '💕', '💗', '💖', '🩷', '🤍', '♥'];
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+
+                const size = Math.random() * 20 + 14; // 14-34px
+                heart.style.fontSize = size + 'px';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 8 + 7) + 's';
+                heart.style.animationDelay = (Math.random() * 12) + 's';
+
+                container.appendChild(heart);
+            }
+        }
+
+        // Generate extra sparkles around the image
+        function createExtraSparkles() {
+            const wrapper = document.querySelector('.image-wrapper');
+            const count = 6;
+
+            for (let i = 0; i < count; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = (Math.random() * 3) + 's';
+                sparkle.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+                wrapper.appendChild(sparkle);
+            }
+        }
+
+        window.onload = function () {
+            createFloatingHearts();
+            createExtraSparkles();
+            toggleAudio();
+        };
+    </script>
+</body>
+
+</html>
