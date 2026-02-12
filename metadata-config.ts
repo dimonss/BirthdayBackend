@@ -88,15 +88,13 @@ export function replaceMetadataMarkers(
     const templateMeta = getTemplateMetadata(templateId);
 
     // Заменяем маркеры в HTML
-    let result = htmlContent
-        .replace(/\{\{EVENT_TITLE\}\}/g, eventMeta.title)
-        .replace(/\{\{EVENT_DESCRIPTION\}\}/g, eventMeta.description)
-        .replace(/\{\{EVENT_KEYWORDS\}\}/g, eventMeta.keywords)
-        .replace(/\{\{EVENT_NAME\}\}/g, eventMeta.name)
-        .replace(/\{\{TEMPLATE_NAME\}\}/g, templateMeta.name)
-        .replace(/\{\{PAGE_URL\}\}/g, pageUrl)
-        .replace(/\{\{CREATION_DATE\}\}/g, creationDate)
-        .replace(/\{\{MODIFICATION_DATE\}\}/g, modificationDate);
-
-    return result;
+    return htmlContent
+        .replace(/{{EVENT_TITLE}}/g, eventMeta.title)
+        .replace(/{{EVENT_DESCRIPTION}}/g, eventMeta.description)
+        .replace(/{{EVENT_KEYWORDS}}/g, eventMeta.keywords)
+        .replace(/{{EVENT_NAME}}/g, eventMeta.name)
+        .replace(/{{TEMPLATE_NAME}}/g, templateMeta.name)
+        .replace(/{{PAGE_URL}}/g, pageUrl)
+        .replace(/{{CREATION_DATE}}/g, creationDate)
+        .replace(/{{MODIFICATION_DATE}}/g, modificationDate);
 }
