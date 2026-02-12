@@ -2,12 +2,13 @@ import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { PAGES_DIR, API_PORT } from './config.js';
+import { checkUserFiles } from './helpers.js';
 
 export function startApiServer() {
     const app = express();
 
     // API: Get list of folders in pages directory
-    app.get('/api/pages', (req, res) => {
+    app.get('/pages', (req, res) => {
         try {
             if (!fs.existsSync(PAGES_DIR!)) {
                 return res.json({ folders: [] });
@@ -15,7 +16,11 @@ export function startApiServer() {
 
             const entries = fs.readdirSync(PAGES_DIR!, { withFileTypes: true });
             const folders = entries
-                .filter(entry => entry.isDirectory())
+                .filter(entry => {
+                    if (!entry.isDirectory()) return false;
+                    const userDir = path.join(PAGES_DIR!, entry.name);
+                    return checkUserFiles(userDir);
+                })
                 .map(entry => {
                     const stats = fs.statSync(path.join(PAGES_DIR!, entry.name));
                     return { name: entry.name, mtime: stats.mtime.getTime() };

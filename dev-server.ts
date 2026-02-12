@@ -38,7 +38,11 @@ app.get('/api/pages', (req, res) => {
 
         const entries = fs.readdirSync(pagesDir, { withFileTypes: true });
         const folders = entries
-            .filter(entry => entry.isDirectory())
+            .filter(entry => {
+                if (!entry.isDirectory()) return false;
+                const userDir = path.join(pagesDir, entry.name);
+                return  fs.existsSync(path.join(userDir, 'img.jpg'));
+            })
             .map(entry => {
                 const stats = fs.statSync(path.join(pagesDir, entry.name));
                 return { name: entry.name, mtime: stats.mtime.getTime() };
