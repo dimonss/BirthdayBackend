@@ -13,10 +13,14 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["*.ts"],
-  "exclude": ["node_modules"],
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   }
-} 
+}
