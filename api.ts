@@ -1,5 +1,6 @@
 import express from 'express';
 import * as fs from 'fs';
+import * as path from 'path';
 import { PAGES_DIR, API_PORT } from './config.js';
 
 export function startApiServer() {
@@ -15,6 +16,11 @@ export function startApiServer() {
             const entries = fs.readdirSync(PAGES_DIR!, { withFileTypes: true });
             const folders = entries
                 .filter(entry => entry.isDirectory())
+                .map(entry => {
+                    const stats = fs.statSync(path.join(PAGES_DIR!, entry.name));
+                    return { name: entry.name, mtime: stats.mtime.getTime() };
+                })
+                .sort((a, b) => b.mtime - a.mtime)
                 .map(entry => entry.name);
 
             res.json({ folders });

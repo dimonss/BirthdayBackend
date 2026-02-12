@@ -39,6 +39,11 @@ app.get('/api/pages', (req, res) => {
         const entries = fs.readdirSync(pagesDir, { withFileTypes: true });
         const folders = entries
             .filter(entry => entry.isDirectory())
+            .map(entry => {
+                const stats = fs.statSync(path.join(pagesDir, entry.name));
+                return { name: entry.name, mtime: stats.mtime.getTime() };
+            })
+            .sort((a, b) => b.mtime - a.mtime)
             .map(entry => entry.name);
 
         res.json({ folders });
