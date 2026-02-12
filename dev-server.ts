@@ -30,7 +30,7 @@ app.use('/assets', (req, res, next) => {
 });
 
 // API: Get list of folders in pages directory
-app.get('/api/pages', (req, res) => {
+app.get('/pages', (req, res) => {
     try {
         if (!fs.existsSync(pagesDir)) {
             return res.json({ folders: [] });
