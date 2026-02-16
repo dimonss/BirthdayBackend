@@ -6,7 +6,7 @@ import {
     AVAILABLE_TEMPLATES, AVAILABLE_EVENTS,
     userTemplates, userEvents
 } from '../config.js';
-import { checkUserFiles } from '../helpers.js';
+import { checkUserFiles, readClientConfig, writeClientConfig } from '../helpers.js';
 
 export function registerCommands(bot: TelegramBot) {
     // Set bot commands
@@ -16,6 +16,7 @@ export function registerCommands(bot: TelegramBot) {
         { command: '/event', description: 'Выбрать тип события' },
         { command: '/template', description: 'Выбрать шаблон для поздравления' },
         { command: '/status', description: 'Проверить статус вашего поздравления' },
+        { command: '/visibility', description: 'Отображение на главной странице' },
         { command: '/delete', description: 'Удалить ваше поздравление' }
     ]);
 
@@ -211,6 +212,42 @@ export function registerCommands(bot: TelegramBot) {
         }
 
         await bot.sendMessage(chatId, statusMessage);
+    });
+
+    // Handle /visibility command
+    bot.onText(/\/visibility/, async (msg) => {
+        const chatId = msg.chat.id;
+        const username = msg.from?.username;
+
+        if (!username) {
+            await bot.sendMessage(
+                chatId,
+                'Для изменения настроек необходимо установить username в настройках Telegram.'
+            );
+            return;
+        }
+
+        const userDir = path.join(PAGES_DIR!, username);
+        const config = readClientConfig(userDir);
+
+        const currentStatus = config.showOnMainPage
+            ? '✅ Ваше поздравление отображается на главной странице'
+            : '❌ Ваше поздравление скрыто с главной страницы';
+
+        const keyboard = {
+            inline_keyboard: [
+                [
+                    { text: '✅ Показывать', callback_data: 'visibility_yes' },
+                    { text: '❌ Скрыть', callback_data: 'visibility_no' }
+                ]
+            ]
+        };
+
+        await bot.sendMessage(
+            chatId,
+            `🌐 Отображение на главной странице\n\n${currentStatus}\n\nВыберите действие:`,
+            { reply_markup: keyboard }
+        );
     });
 
     // Handle /delete command

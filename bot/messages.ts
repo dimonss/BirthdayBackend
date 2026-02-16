@@ -12,6 +12,25 @@ import {
     writeClientConfig
 } from '../helpers.js';
 
+// Send visibility consent prompt
+async function sendVisibilityPrompt(bot: TelegramBot, chatId: number) {
+    const keyboard = {
+        inline_keyboard: [
+            [
+                { text: '✅ Да, показывать', callback_data: 'visibility_yes' },
+                { text: '❌ Нет', callback_data: 'visibility_no' }
+            ]
+        ]
+    };
+
+    await bot.sendMessage(
+        chatId,
+        '🌐 Хотите, чтобы ваше поздравление отображалось в общем списке на главной странице?\n\n' +
+        'Вы сможете изменить это позже командой /visibility.',
+        { reply_markup: keyboard }
+    );
+}
+
 export function registerMessageHandlers(bot: TelegramBot) {
     bot.on('message', async (msg: any) => {
         const chatId = msg.chat.id;
@@ -38,7 +57,7 @@ export function registerMessageHandlers(bot: TelegramBot) {
         // Create user directory if it doesn't exist
         if (!fs.existsSync(userDir)) {
             fs.mkdirSync(userDir);
-            writeClientConfig(userDir, { showOnMainPage: true });
+            writeClientConfig(userDir, { showOnMainPage: false });
         }
 
         // Handle photo messages
@@ -80,6 +99,7 @@ export function registerMessageHandlers(bot: TelegramBot) {
                     const selectedEvent = userEvents.get(username) || 'birthday';
                     copyHtmlTemplate(userDir, selectedTemplate, selectedEvent, username);
                     await sendUserPageLink(bot, chatId, username);
+                    await sendVisibilityPrompt(bot, chatId);
                 } else {
                     await bot.sendMessage(
                         chatId,
@@ -130,6 +150,7 @@ export function registerMessageHandlers(bot: TelegramBot) {
                     const selectedEvent = userEvents.get(username) || 'birthday';
                     copyHtmlTemplate(userDir, selectedTemplate, selectedEvent, username);
                     await sendUserPageLink(bot, chatId, username);
+                    await sendVisibilityPrompt(bot, chatId);
                 } else {
                     await bot.sendMessage(
                         chatId,

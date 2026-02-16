@@ -105,7 +105,7 @@ export interface ClientConfig {
 }
 
 const DEFAULT_CLIENT_CONFIG: ClientConfig = {
-    showOnMainPage: true,
+    showOnMainPage: false,
 };
 
 // Read client config from user directory

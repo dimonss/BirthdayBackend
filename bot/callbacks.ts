@@ -5,7 +5,7 @@ import {
     AVAILABLE_TEMPLATES, AVAILABLE_EVENTS,
     userTemplates, userEvents
 } from '../config.js';
-import { checkUserFiles, copyHtmlTemplate } from '../helpers.js';
+import { checkUserFiles, copyHtmlTemplate, readClientConfig, writeClientConfig } from '../helpers.js';
 
 export function registerCallbackHandlers(bot: TelegramBot) {
     bot.on('callback_query', async (callbackQuery) => {
@@ -14,6 +14,30 @@ export function registerCallbackHandlers(bot: TelegramBot) {
         const data = callbackQuery.data;
 
         if (!chatId || !username || !data) {
+            return;
+        }
+
+        // Handle visibility consent
+        if (data === 'visibility_yes' || data === 'visibility_no') {
+            const userDir = path.join(PAGES_DIR!, username);
+            const showOnMainPage = data === 'visibility_yes';
+            const config = readClientConfig(userDir);
+            config.showOnMainPage = showOnMainPage;
+            writeClientConfig(userDir, config);
+
+            await bot.answerCallbackQuery(callbackQuery.id, {
+                text: showOnMainPage ? 'Поздравление будет показано' : 'Поздравление скрыто'
+            });
+
+            await bot.editMessageText(
+                showOnMainPage
+                    ? '✅ Ваше поздравление теперь отображается на главной странице!\n\nИзменить: /visibility'
+                    : '❌ Ваше поздравление скрыто с главной страницы.\n\nИзменить: /visibility',
+                {
+                    chat_id: chatId,
+                    message_id: callbackQuery.message?.message_id
+                }
+            );
             return;
         }
 
