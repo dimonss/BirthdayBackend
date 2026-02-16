@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import * as path from 'path';
 import {
-    PAGES_DIR,
+    PAGES_DIR, MAIN_PAGE_URL,
     AVAILABLE_TEMPLATES, AVAILABLE_EVENTS,
     userTemplates, userEvents
 } from '../config.js';
@@ -31,7 +31,7 @@ export function registerCallbackHandlers(bot: TelegramBot) {
 
             await bot.editMessageText(
                 showOnMainPage
-                    ? '✅ Ваше поздравление теперь отображается на главной странице!\n\nИзменить: /visibility'
+                    ? `✅ Ваше поздравление теперь отображается на главной странице!\n${MAIN_PAGE_URL}\n\nИзменить: /visibility`
                     : '❌ Ваше поздравление скрыто с главной страницы.\n\nИзменить: /visibility',
                 {
                     chat_id: chatId,

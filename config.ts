@@ -17,6 +17,7 @@ export const AUDIO_SIZE_LIMIT = 1024 * 1024; // 1MB
 export const BOT_TOKEN = process.env.BOT_TOKEN;
 export const USER_PAGE_URL = process.env.USER_PAGE_URL;
 export const PAGES_DIR = process.env.PAGES_DIR;
+export const MAIN_PAGE_URL = process.env.MAIN_PAGE_URL || '';
 export const API_PORT = process.env.API_PORT ? parseInt(process.env.API_PORT) : 3000;
 
 if (!BOT_TOKEN) {
