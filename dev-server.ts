@@ -4,6 +4,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import * as dotenv from 'dotenv';
+import { readClientConfig } from './helpers.js';
 
 // Load environment variables
 dotenv.config();
@@ -41,7 +42,9 @@ app.get('/pages', (req, res) => {
             .filter(entry => {
                 if (!entry.isDirectory()) return false;
                 const userDir = path.join(pagesDir, entry.name);
-                return  fs.existsSync(path.join(userDir, 'img.jpg'));
+                if (!fs.existsSync(path.join(userDir, 'img.jpg'))) return false;
+                const config = readClientConfig(userDir);
+                return config.showOnMainPage;
             })
             .map(entry => {
                 const stats = fs.statSync(path.join(pagesDir, entry.name));

@@ -2,7 +2,7 @@ import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { PAGES_DIR, API_PORT } from './config.js';
-import { checkUserFiles } from './helpers.js';
+import { checkUserFiles, readClientConfig } from './helpers.js';
 
 export function startApiServer() {
     const app = express();
@@ -19,7 +19,9 @@ export function startApiServer() {
                 .filter(entry => {
                     if (!entry.isDirectory()) return false;
                     const userDir = path.join(PAGES_DIR!, entry.name);
-                    return checkUserFiles(userDir);
+                    if (!checkUserFiles(userDir)) return false;
+                    const config = readClientConfig(userDir);
+                    return config.showOnMainPage;
                 })
                 .map(entry => {
                     const stats = fs.statSync(path.join(PAGES_DIR!, entry.name));

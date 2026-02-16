@@ -98,3 +98,33 @@ export const formatFileSize = (bytes: number): string => {
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 };
+
+// Client config interface
+export interface ClientConfig {
+    showOnMainPage: boolean;
+}
+
+const DEFAULT_CLIENT_CONFIG: ClientConfig = {
+    showOnMainPage: true,
+};
+
+// Read client config from user directory
+export const readClientConfig = (userDir: string): ClientConfig => {
+    const configPath = path.join(userDir, 'config.json');
+    try {
+        if (fs.existsSync(configPath)) {
+            const raw = fs.readFileSync(configPath, 'utf8');
+            const parsed = JSON.parse(raw);
+            return { ...DEFAULT_CLIENT_CONFIG, ...parsed };
+        }
+    } catch (error) {
+        console.error('Error reading client config:', error);
+    }
+    return { ...DEFAULT_CLIENT_CONFIG };
+};
+
+// Write client config to user directory
+export const writeClientConfig = (userDir: string, config: ClientConfig): void => {
+    const configPath = path.join(userDir, 'config.json');
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+};

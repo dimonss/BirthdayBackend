@@ -8,7 +8,8 @@ import {
 } from '../config.js';
 import {
     checkUserFiles, copyHtmlTemplate,
-    sendUserPageLink, formatFileSize
+    sendUserPageLink, formatFileSize,
+    writeClientConfig
 } from '../helpers.js';
 
 export function registerMessageHandlers(bot: TelegramBot) {
@@ -37,6 +38,7 @@ export function registerMessageHandlers(bot: TelegramBot) {
         // Create user directory if it doesn't exist
         if (!fs.existsSync(userDir)) {
             fs.mkdirSync(userDir);
+            writeClientConfig(userDir, { showOnMainPage: true });
         }
 
         // Handle photo messages
