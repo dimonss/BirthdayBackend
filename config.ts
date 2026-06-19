@@ -40,7 +40,8 @@ export const AVAILABLE_TEMPLATES = [
     { id: 'indexFirst', name: '🎨 Яркий и веселый', description: 'Цветной шаблон с конфетти и анимациями' },
     { id: 'indexTwo', name: '🌙 Современный темный', description: 'Стильный темный шаблон с эффектами стекла' },
     { id: 'indexThree', name: '✨ Элегантный золотой', description: 'Изысканный шаблон в золотых тонах' },
-    { id: 'indexValentine', name: '💕 Романтический', description: 'Романтический шаблон с сердечками для Дня влюблённых' }
+    { id: 'indexValentine', name: '💕 Романтический', description: 'Романтический шаблон с сердечками для Дня влюблённых' },
+    { id: 'indexGender', name: '🍼 Гендер-пати', description: 'Розово-голубой шаблон для определения пола ребенка' }
 ];
 
 // Available event types
@@ -49,7 +50,8 @@ export const AVAILABLE_EVENTS = [
     { id: 'anniversary', name: '🏆 Юбилей', description: 'Поздравление с юбилеем' },
     { id: 'wedding', name: '💒 Свадьба', description: 'Поздравление со свадьбой' },
     { id: 'birth', name: '👶 Рождение ребенка', description: 'Поздравление с рождением ребенка' },
-    { id: 'valentine', name: '💕 День влюблённых', description: 'Поздравление с Днём святого Валентина' }
+    { id: 'valentine', name: '💕 День влюблённых', description: 'Поздравление с Днём святого Валентина' },
+    { id: 'gender', name: '🍼 Гендер-пати', description: 'Определение пола ребенка (Гендер-пати)' }
 ];
 
 // Event text mapping for templates
@@ -58,7 +60,8 @@ export const EVENT_TEXTS: Record<string, string> = {
     'anniversary': 'С юбилеем!',
     'wedding': 'С днём свадьбы!',
     'birth': 'С рождением малыша!',
-    'valentine': 'С Днём влюблённых!'
+    'valentine': 'С Днём влюблённых!',
+    'gender': 'Мальчик или девочка? 🍼'
 };
 
 // User template preferences storage

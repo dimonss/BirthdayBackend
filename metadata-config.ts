@@ -42,6 +42,12 @@ export const EVENT_METADATA: Record<string, EventMetadata> = {
         description: 'Романтическое поздравление с Днём святого Валентина',
         keywords: 'день влюблённых, валентинка, любовь, романтика, 14 февраля',
         name: 'День святого Валентина'
+    },
+    'gender': {
+        title: 'Гендер-пати!',
+        description: 'Определение пола ребенка — мальчик или девочка?',
+        keywords: 'гендер пати, определение пола, мальчик или девочка, ребенок, baby reveal, gender party',
+        name: 'Гендер-пати'
     }
 };
 
@@ -62,6 +68,10 @@ export const TEMPLATE_METADATA: Record<string, TemplateMetadata> = {
     'indexValentine': {
         name: 'Романтический',
         description: 'Романтический шаблон с сердечками для Дня влюблённых'
+    },
+    'indexGender': {
+        name: 'Гендер-пати',
+        description: 'Розово-голубой шаблон для определения пола ребенка'
     }
 };
 

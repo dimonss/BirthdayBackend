@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{EVENT_TITLE}}</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="{{EVENT_DESCRIPTION}} — праздничная открытка с фото и аудио для Гендер-пати. Узнайте пол малыша!">
+    <meta name="keywords" content="{{EVENT_KEYWORDS}}, гендер-пати, пол ребенка, мальчик или девочка, фото, аудио, открытка">
+    <meta name="author" content="Birthday Greeting Bot">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{{EVENT_TITLE}}">
+    <meta property="og:description" content="{{EVENT_DESCRIPTION}} — открытка для Гендер-пати с фото и аудио.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./img.jpg">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:site_name" content="Birthday Greeting Bot">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{EVENT_TITLE}}">
+    <meta name="twitter:description" content="{{EVENT_DESCRIPTION}} — открытка для Гендер-пати с фото и аудио.">
+    <meta name="twitter:image" content="./img.jpg">
+
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#fbcfe8">
+    <meta name="msapplication-TileColor" content="#fbcfe8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Гендер-пати!">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "{{EVENT_TITLE}}",
+      "description": "{{EVENT_DESCRIPTION}}",
+      "url": "{{PAGE_URL}}",
+      "author": {
+        "@type": "Organization",
+        "name": "Birthday Greeting Bot"
+      },
+      "datePublished": "{{CREATION_DATE}}",
+      "dateModified": "{{MODIFICATION_DATE}}",
+      "image": "./img.jpg",
+      "mainEntity": {
+        "@type": "Event",
+        "name": "{{EVENT_NAME}}",
+        "description": "{{EVENT_DESCRIPTION}}"
+      }
+    }
+    </script>
+
+    <style>
+        :root {
+            --pink: #ff85a2;
+            --blue: #5fb2ff;
+            --pink-glow: rgba(255, 133, 162, 0.6);
+            --blue-glow: rgba(95, 178, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-color: #3b3a30;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            /* Dynamic smooth diagonal split gradient (pink vs blue) */
+            background: linear-gradient(135deg, #ffd1dc 0%, #e0f2fe 50%, #b3e5fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating elements background */
+        .particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            bottom: -50px;
+            opacity: 0.7;
+            user-select: none;
+            animation: floatUp 10s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 1.5rem;
+        }
+
+        /* Beautiful Glassmorphism Card */
+        .gender-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 2.5rem 1.5rem;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border: 2px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .gender-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 20px 45px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        /* Image frame styling */
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 2rem 0;
+        }
+
+        .image-wrapper img {
+            width: 230px;
+            height: 230px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 0 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.5s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Dual glowing rotating ring behind image */
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--pink), var(--blue), var(--pink));
+            background-size: 200% 200%;
+            animation: rotateGlow 6s linear infinite, shimerBg 4s ease infinite;
+            z-index: 1;
+            opacity: 0.9;
+            filter: blur(6px);
+        }
+
+        @keyframes rotateGlow {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes shimerBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Pulsing rings for ambient effect */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 270px;
+            height: 270px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: ringPulse 4s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .pulse-ring:nth-child(2) {
+            width: 290px;
+            height: 290px;
+            border-color: rgba(255, 255, 255, 0.2);
+            animation-delay: 1s;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(0.95);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                opacity: 0.6;
+            }
+        }
+
+        /* Message style */
+        .message {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-top: 1rem;
+            text-align: center;
+            background: linear-gradient(to right, #e879f9, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            animation: textPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: rgba(59, 58, 48, 0.7);
+            margin-top: 0.5rem;
+        }
+
+        /* Audio controls */
+        .audio-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                0 0 10px var(--pink-glow),
+                0 0 10px var(--blue-glow);
+        }
+
+        .audio-control:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.15),
+                0 0 15px rgba(255, 133, 162, 0.8),
+                0 0 15px rgba(95, 178, 255, 0.8);
+        }
+
+        .audio-control::before {
+            content: '🔊';
+            font-size: 1.6rem;
+        }
+
+        .audio-control.muted::before {
+            content: '🔇';
+        }
+
+        /* Decorative top/bottom accent details */
+        .decorations {
+            position: absolute;
+            top: 15px;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="particles-bg" id="particles-bg"></div>
+
+    <div class="container">
+        <div class="gender-card">
+            <div class="decorations">🎀 🍼 🎈</div>
+            
+            <div class="image-wrapper">
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
+                <div class="glow-ring"></div>
+                <img src="./img.jpg" alt="Gender Party Image">
+            </div>
+
+            <div class="message">Мальчик или девочка? 🍼</div>
+            <div class="subtitle">Узнаем пол нашего малыша вместе!</div>
+        </div>
+    </div>
+
+    <div class="audio-control" onclick="toggleAudio()"></div>
+
+    <audio id="audio" autoplay muted loop>
+        <source src="./audio.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const audioControl = document.querySelector('.audio-control');
+        let isMuted = true;
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            audioControl.classList.toggle('muted');
+
+            if (!isMuted) {
+                audio.play().catch(error => {
+                    console.log("Autoplay blocked:", error);
+                });
+            }
+        }
+
+        // Generate pink and blue gender-reveal themed particles
+        function createParticles() {
+            const container = document.getElementById('particles-bg');
+            const particleCount = 24;
+            const emojis = ['👶', '🍼', '❓', '💙', '💖', '✨', '🎀', '🎈', '❔'];
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+                // Set randomized properties
+                const size = Math.random() * 20 + 16; // 16-36px
+                particle.style.fontSize = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Varied speed and delay
+                const duration = Math.random() * 6 + 7; // 7-13s
+                const delay = Math.random() * 10; // 0-10s
+                particle.style.animationDuration = duration + 's';
+                particle.style.animationDelay = delay + 's';
+
+                // Subtle colors for text emoji particles
+                if (Math.random() > 0.5) {
+                    particle.style.filter = 'drop-shadow(0 0 5px rgba(255, 133, 162, 0.4))';
+                } else {
+                    particle.style.filter = 'drop-shadow(0 0 5px rgba(95, 178, 255, 0.4))';
+                }
+
+                container.appendChild(particle);
+            }
+        }
+
+        window.onload = function () {
+            createParticles();
+            toggleAudio(); // Start muted initially (some browsers block autoplay without click)
+        };
+    </script>
+</body>
+
+</html>
