@@ -38,7 +38,8 @@
     "watch": "tsc -w",
     "init-db": "ts-node-esm init-db.ts",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint:fix": "eslint . --ext .ts --fix",
+    "start:prod": "pm2 start dist/index.js --name BirthdayBackend --interpreter /root/.nvm/versions/node/v24.22.1/bin/node"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
